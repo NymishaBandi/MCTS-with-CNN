@@ -1,1 +1,1 @@
-# MCTS-with-CNN
+# Image generation using MCTS and CNN
