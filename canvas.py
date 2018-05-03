@@ -12,7 +12,8 @@ turtle.penup()
 
 wn=turtle.Screen()
 turtle=turtle.Turtle()
-
+turtle.goto(-130,150)
+time.sleep(5)
 
 
 nspeed = 2

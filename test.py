@@ -1,54 +1,43 @@
-import turtle, random, time
-
-turtle.title('Test')
-turtle.shape('turtle')
-turtle.color('white')
-turtle.fillcolor('white')
-turtle.bgcolor('skyblue')
-turtle.pensize(2)
-turtle.speed(100000)
-turtle.penup()
+from PIL import Image, ImageFilter
 
 
+def imageprepare(argv):
+    """
+    This function returns the pixel values.
+    The imput is a png file location.
+    """
+    im = Image.open(argv).convert('L')
+    width = float(im.size[0])
+    height = float(im.size[1])
+    newImage = Image.new('L', (28, 28), (255))  # creates white canvas of 28x28 pixels
 
+    if width > height:  # check which dimension is bigger
+        # Width is bigger. Width becomes 20 pixels.
+        nheight = int(round((20.0 / width * height), 0))  # resize height according to ratio width
+        if (nheight == 0):  # rare case but minimum is 1 pixel
+            nheight = 1
+            # resize and sharpen
+        img = im.resize((20, nheight), Image.ANTIALIAS).filter(ImageFilter.SHARPEN)
+        wtop = int(round(((28 - nheight) / 2), 0))  # calculate horizontal position
+        newImage.paste(img, (4, wtop))  # paste resized image on white canvas
+    else:
+        # Height is bigger. Heigth becomes 20 pixels.
+        nwidth = int(round((20.0 / height * width), 0))  # resize width according to ratio height
+        if (nwidth == 0):  # rare case but minimum is 1 pixel
+            nwidth = 1
+            # resize and sharpen
+        img = im.resize((nwidth, 20), Image.ANTIALIAS).filter(ImageFilter.SHARPEN)
+        wleft = int(round(((28 - nwidth) / 2), 0))  # caculate vertical pozition
+        newImage.paste(img, (wleft, 4))  # paste resized image on white canvas
 
-nspeed = 2
-smin = 0
-smax = 2
-nrot = 7
-rmax = 30
-rinc = rmax*2/nrot
-n_act = nspeed * nrot
-actions ={}
+    # newImage.save("sample.png
 
-import numpy as np
-import random
-speed = range(smin,smax)
-rot = np.arange(-rmax,rmax,rinc)
-for i in speed:
-    for j in rot:
-        actions.update({(i,j):{'nov':0,'Q':0}})
+    tv = list(newImage.getdata())  # get pixel values
 
-untried_actions=[]
-for k in actions.keys():
-    if actions[k]['nov']==0:
-        untried_actions.append(k)
+    # normalize pixels to 0 and 1. 0 is pure white, 1 is pure black.
+    tva = [(255 - x) * 1.0 / 255.0 for x in tv]
+    print(tva)
+    return tva
 
-action = random.choice(untried_actions)
-s=action[0]
-turtle.speed(s)
-turtle.pendown()
-turtle.right(action[1])
-time.sleep(5)
-turtle.forward(10)
-time.sleep(5)
-# root = tk.Tk()
-
-# label = tk.Canvas(root,width=500,height=500)
-# i=label.create_oval(10,10,25,25,fill='red')
-# label.move(i,245,100)
-# label.pack()
-
-# root.mainloop()
-
-
+x=imageprepare('image.png')#file path here
+print(len(x))# mnist IMAGES are 28x28=784 pixels
